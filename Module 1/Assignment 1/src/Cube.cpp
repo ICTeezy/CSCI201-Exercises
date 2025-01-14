@@ -45,19 +45,28 @@ void Cube::setHeight(int height)
 
 void Cube::setColor(char *color) // Doesn't take ownership of passed in string
 {
-    int colorLength = strlen(color);
+    int newColorLength = strlen(color);
 
-    if (!m_color) // No color stored (construction) allocate for copy
+    if (!m_color) // No color stored (construction) allocate and copy
     {
-        m_color = new char[colorLength];
+        m_color = new char[newColorLength];
+        std::memcpy(m_color, color, newColorLength);
+        return;
     }
-    else if (strlen(m_color) < colorLength) // Current buffer is too small, re-allocate
+
+    int oldColorLength = strlen(m_color);
+
+    if (oldColorLength < newColorLength) // Current buffer is too small, re-allocate
     {
         delete m_color;
-        m_color = new char[colorLength];
+        m_color = new char[newColorLength];
+    }
+    else
+    {
+        std::memset(m_color, 0, oldColorLength); // Clear previous string
     }
 
-    std::memcpy(m_color, color, strlen(color));
+    std::memcpy(m_color, color, newColorLength);
 }
 
 int Cube::calculateVolume()
