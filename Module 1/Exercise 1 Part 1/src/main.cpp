@@ -36,21 +36,19 @@ int promptCubeDimension(std::string prompt, std::string failMessage)
     return dimension;
 }
 
-const std::string INVALID_DIMENSION_MESSAGE = "Make sure the length is a whole integer > 0!";
-
 int promptLength()
 {
-    return promptCubeDimension("Enter cube length: ", INVALID_DIMENSION_MESSAGE);
+    return promptCubeDimension("Enter cube length: ", "Make sure the length is a whole integer > 0!");
 }
 
 int promptWidth()
 {
-    return promptCubeDimension("Enter cube width: ", INVALID_DIMENSION_MESSAGE);
+    return promptCubeDimension("Enter cube width: ", "Make sure the width is a whole integer > 0!");
 }
 
 int promptHeight()
 {
-    return promptCubeDimension("Enter cube height: ", INVALID_DIMENSION_MESSAGE);
+    return promptCubeDimension("Enter cube height: ", "Make sure the width is a whole integer > 0!");
 }
 
 bool displayMenu(Cube& cube)
