@@ -1,4 +1,4 @@
-
+#include <string>
 
 class Cube
 {
@@ -7,20 +7,20 @@ private:
     int m_length;
     int m_width;
     int m_height;
-    char *m_color;
+    std::string m_color;
 
 public:
-    Cube(int length, int width, int height, char *color);
+    Cube(int length, int width, int height, std::string color);
 
     int getLength();
     int getWidth();
     int getHeight();
-    char* const getColor();
+    std::string getColor();
 
     void setLength(int length);
     void setWidth(int width);
     void setHeight(int height);
-    void setColor(char *color);
+    void setColor(std::string color);
 
     int calculateVolume();
 };
