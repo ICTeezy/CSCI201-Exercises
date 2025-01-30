@@ -111,6 +111,10 @@ int main()
 
     cout << '\n';
     cout << "The average score was: " << calculateAverageScore(scores) << '\n';
-    cout << "The highest score was: " << highScore(scores) << '\n';
-    cout << "The lowest score was: " << lowScore(scores) << '\n';
-}
+    
+    int highScoreModule = highScore(scores);
+    int lowScoreModule = lowScore(scores);
+
+    cout << "The highest score was in module " << highScoreModule << " with a score of " << scores[highScoreModule- 1] << '\n';
+    cout << "The lowest score was in module " << lowScoreModule  << " with a score of " << scores[lowScoreModule- 1] << '\n';
+ear
