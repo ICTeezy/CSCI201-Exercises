@@ -81,23 +81,23 @@ int main()
         return -1;
     }
 
-    //Bind the server socket
+    // Bind the server socket
     sockaddr_in address;
     inet_pton(AF_INET, "127.0.0.1", &address.sin_addr.s_addr);
     address.sin_family = AF_INET;
     address.sin_port = htons(PORT);
 
-    int bindResult = bind(serverSocket, (sockaddr*) &address, sizeof(sockaddr));
+    int bindResult = bind(serverSocket, (sockaddr *)&address, sizeof(sockaddr));
 
     if (bindResult == -1)
     {
-        std::cout << "Failed to bind on port " << PORT << '\n';
+        std::cout << "Failed to bind on port " << PORT << ". Address may already be in use!\n";
         return -1;
     }
 
     std::cout << "Server bound to port " << PORT << '\n';
 
-    //Set the socket to listen
+    // Set the socket to listen
     int listenResult = listen(serverSocket, 3);
 
     if (listenResult == -1)
@@ -107,52 +107,44 @@ int main()
     }
 
     std::cout << "Server listening on port " << PORT << '\n';
-
-    //std::ifstream stateLookupFile("../resources/state_translations.tsv");
-    //auto lookupMap = fetchStateLookupMap(stateLookupFile);
-
-    std::cout << "Waiting for connection...\n";
-
-    //Accept connection
-    int clientSocket = accept(serverSocket, nullptr, nullptr);
-
-    if (clientSocket == -1)
-    {
-        std::cout << "Failed to accept connection\n";
-        return -1;
-    }
-
-    std::cout << "Accepted connection.\n";
-
     auto lookupMap = fetchStateLookupMap();
 
     do
     {
+        std::cout << "Waiting for connection...\n";
+
+        // Accept connection
+        int clientSocket = accept(serverSocket, nullptr, nullptr);
+
+        if (clientSocket == -1)
+        {
+            std::cout << "Failed to accept connection\n";
+            return -1;
+        }
+
+        std::cout << "Accepted connection.\n";
+
         char abbreviation[3] = {};
         int bytesReceived = recv(clientSocket, abbreviation, sizeof(abbreviation), 0);
 
         if (bytesReceived == -1)
         {
             std::cout << "Connection closed.\n";
-            break;
+            close(clientSocket);
+            continue;
         }
 
         if (bytesReceived < 2)
         {
             char message[] = "Error: Didn't receieve enough bytes.\n";
             send(clientSocket, message, strlen(message), 0);
+            close(clientSocket);
             continue;
-        }
-
-        if (abbreviation == "-1")
-        {
-            std::cout << "Received shutdown command.\n";
-            break;
         }
 
         std::cout << "Fetching lookup for: `" << abbreviation << "`\n";
         if (lookupMap.count(abbreviation) == 0)
-        { 
+        {
             char message[] = "Error: Invalid abbreviation.\n";
             send(clientSocket, message, strlen(message), 0);
         }
@@ -165,8 +157,10 @@ int main()
 
             send(clientSocket, fullMessage.c_str(), strlen(fullMessage.c_str()), 0);
         }
+
+        close(clientSocket);
+
     } while (true);
 
-    close(clientSocket);
     close(serverSocket);
 }

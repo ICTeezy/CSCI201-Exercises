@@ -23,7 +23,7 @@ int main()
     address.sin_port = htons(PORT);
     inet_pton(AF_INET, "127.0.0.1", &address.sin_addr.s_addr);
 
-    int connectionResult = connect(clientSocket, (sockaddr*) &address, sizeof(sockaddr));
+    int connectionResult = connect(clientSocket, (sockaddr *)&address, sizeof(sockaddr));
 
     if (connectionResult == -1)
     {
@@ -32,37 +32,30 @@ int main()
     }
 
     std::cout << "Connected to server...\n";
-    do 
+    std::cout << "Enter abbreviation to lookup: ";
+    std::string abbreviation;
+    std::cin >> abbreviation;
+
+    if (abbreviation == "-1")
     {
-        std::cout << "Enter abbreviation to lookup (-1 to exit): ";
-        std::string abbreviation;   
-        std::cin >> abbreviation;
+        std::cout << "Closing connection...\n";
+        close(clientSocket);
+        return 1;
+    }
 
-        if (abbreviation == "-1")
-        {
-            std::cout << "Closing connection...\n";
-            break;
-        }
+    if (abbreviation.length() != 2)
+    {
+        std::cout << "State abbreviations must be 2 characters long! Try again.\n";
+        close(clientSocket);
+        return 1;
+    }
 
-        if (abbreviation.length() != 2)
-        {
-            std::cout << "State abbreviations must be 2 characters long! Try again.\n";
-            continue;
-        }
+    send(clientSocket, abbreviation.c_str(), strlen(abbreviation.c_str()), 0);
 
-        send(clientSocket, abbreviation.c_str(), strlen(abbreviation.c_str()), 0);
+    char serverMessage[256] = {};
+    int bytesReceived = recv(clientSocket, serverMessage, sizeof(serverMessage), 0);
 
-        char serverMessage[256] = {};
-        int bytesReceived = recv(clientSocket, serverMessage, sizeof(serverMessage), 0);
-
-        if (bytesReceived <= 0)
-        {
-            std::cout << "Server force closed connection.\n";
-            break;
-        }
-
-        std::cout << "Server: " << serverMessage << "\n";
-    } while (true);
+    std::cout << "Server: " << serverMessage << "\n";
 
     close(clientSocket);
 }
