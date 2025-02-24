@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include "Player.h"
 
@@ -282,4 +283,56 @@ class Returner : public Player
 
 int main()
 {
+    std::vector<Player> team;
+
+    do 
+    {
+        cout << "1. Add Player\n";
+        cout << "2. View Team\n";
+        cout << "3. Exit\n";
+        cout << ">> ";
+
+        int choice;
+        std::cin >> choice;
+
+        cout << '\n';
+
+        if (choice == 1)
+        {
+            std::string playerName;
+            cout << "What is the name of this player?\n";
+            cout << ">> ";
+
+            std::cin >> playerName;
+
+            cout << '\n';
+
+            cout << "What is the player's jersey number?\n";
+            cout << ">> ";
+
+            int jerseyNumber;
+            std::cin >> jerseyNumber;
+
+            cout << '\n';
+
+            team.emplace_back(playerName, jerseyNumber);
+        }
+        else if (choice == 2)
+        {
+            for (Player& player : team )
+            {
+                cout << player.toString() << '\n';
+            }
+        }
+        else if (choice == 3)
+        {
+            cout << "Goodbye!";
+            break;
+        }
+        else
+        {
+            cout << "Invalid choice. Try again.\n";
+        }
+
+    } while (true);
 }
